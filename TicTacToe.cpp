@@ -100,9 +100,6 @@ bool make_simple_cpu_move(Board * b, int cpuval) {
 	return false;
 }
 
-
-
-
 bool isEmpty(Board* b, int row, int col){
 	if(b->get_square(row, col) == 0) return true;
 	else return false;
@@ -117,7 +114,7 @@ int minValue(Board* b, int cpuval){
 	}
 	//otherwise, recursive call to maxValue for all successors
 	else{
-		Board** test;
+		Board* test[9];
 		int count = 0;
 		int t;
 		int min = 1;
@@ -133,7 +130,7 @@ int minValue(Board* b, int cpuval){
 				}
 			}
 		}
-	delete[] test;
+	for(int k=0; k<count; k++) delete test[count];
 	}
 }
 
@@ -145,23 +142,22 @@ int maxValue(Board* b, int cpuval){
 	}
 	//otherwise, recursive call to minValue for all successors
 	else{
-		Board** test;
+		Board* test[9];
 		int count = 0;
 		int t;
 		int max = -1;
-		int oppoval = (cpuval * -1);
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
 				if(isEmpty(b, i, j)){
 					test[count] = new Board(*b);
-					test[count]->play_square(i, j, oppoval);
+					test[count]->play_square(i, j, cpuval);
 					t = minValue(test[count], cpuval);
 					if(t > max) max = t;
 					count++;
 				}
 			}
 		}
-	delete[] test;
+	for(int k=0; k<count; k++) delete test[count];
 	}
 }
 
