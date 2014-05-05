@@ -126,11 +126,13 @@ int minValue(Board* b, int cpuval){
 					test[count]->play_square(i, j, oppoval);
 					t = maxValue(test[count], cpuval);
 					if(t < min) min = t;
+					cout << count << endl;
 					count++;
 				}
 			}
 		}
 	for(int k=0; k<count; k++) delete test[count];
+	return min;
 	}
 }
 
@@ -153,11 +155,13 @@ int maxValue(Board* b, int cpuval){
 					test[count]->play_square(i, j, cpuval);
 					t = minValue(test[count], cpuval);
 					if(t > max) max = t;
+					cout << count << endl;
 					count++;
 				}
 			}
 		}
 	for(int k=0; k<count; k++) delete test[count];
+	return max;
 	}
 }
 
@@ -210,7 +214,14 @@ int main(int argc, char * argv[])
 
 int main(){
 	Board* b = new Board();
-	b->play_square(1, 3, -1);
+	b->play_square(1, 1, 1);
+	b->play_square(1, 2, -1);
+	b->play_square(1, 3, 1);
+	b->play_square(2, 1, -1);
+	b->play_square(2, 2, -1);
+	b->play_square(2, 3, 1);
+	b->play_square(3, 1, 1);
+	b->play_square(3, 2, 1);
 	cout << minValue(b, 1) << endl;
 
 	return 0;
