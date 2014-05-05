@@ -19,6 +19,7 @@ public:
 	int get_square(int, int);
 	int winner();
 	bool full_board();
+	bool isEmpty(int, int);
 };
 
 Board::Board() {
@@ -80,13 +81,17 @@ int Board::get_square(int row, int col) {
 	return squares[row-1][col-1];
 }
 
+bool Board::isEmpty(int row, int col){
+	if(get_square(row, col)==0) return true;
+	else return false; 
+}
+
 /********************************************************
 * Declare all functions not in Board class here
 ********************************************************/
 
 int minValue(Board*, int);
 int maxValue(Board*, int);
-int isEmpty(Board*, int);
 void play();
 bool make_simple_cpu_move(Board*, int);
 
@@ -98,11 +103,6 @@ bool make_simple_cpu_move(Board * b, int cpuval) {
 				return true;
 			}
 	return false;
-}
-
-bool isEmpty(Board* b, int row, int col){
-	if(b->get_square(row, col) == 0) return true;
-	else return false;
 }
 
 
@@ -121,7 +121,7 @@ int minValue(Board* b, int cpuval){
 		int oppoval = (cpuval * -1);
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
-				if(isEmpty(b, i, j)){
+				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
 					test[count]->play_square(i, j, oppoval);
 					t = maxValue(test[count], cpuval);
@@ -148,7 +148,7 @@ int maxValue(Board* b, int cpuval){
 		int max = -1;
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
-				if(isEmpty(b, i, j)){
+				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
 					test[count]->play_square(i, j, cpuval);
 					t = minValue(test[count], cpuval);
