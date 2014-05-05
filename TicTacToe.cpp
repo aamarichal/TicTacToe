@@ -117,20 +117,23 @@ int minValue(Board* b, int cpuval){
 	}
 	//otherwise, recursive call to maxValue for all successors
 	else{
+		Board** test;
+		int count = 0;
 		int t;
 		int min = 1;
 		int oppoval = (cpuval * -1);
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
 				if(isEmpty(b, i, j)){
-					Board* test = new Board(*b);
-					test->play_square(i, j, oppoval);
-					t = maxValue(test, cpuval);
+					test[count] = new Board(*b);
+					test[count]->play_square(i, j, oppoval);
+					t = maxValue(test[count], cpuval);
 					if(t < min) min = t;
-					delete test;
+					count++;
 				}
 			}
 		}
+	delete[] test;
 	}
 }
 
@@ -142,20 +145,23 @@ int maxValue(Board* b, int cpuval){
 	}
 	//otherwise, recursive call to minValue for all successors
 	else{
+		Board** test;
+		int count = 0;
 		int t;
 		int max = -1;
 		int oppoval = (cpuval * -1);
 		for(int i=0; i<3; i++){
 			for(int j=0; j<3; j++){
 				if(isEmpty(b, i, j)){
-					Board* test = new Board(*b);
-					test->play_square(i, j, oppoval);
-					t = minValue(test, cpuval);
+					test[count] = new Board(*b);
+					test[count]->play_square(i, j, oppoval);
+					t = minValue(test[count], cpuval);
 					if(t > max) max = t;
-					delete test;
+					count++;
 				}
 			}
 		}
+	delete[] test;
 	}
 }
 
