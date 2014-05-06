@@ -113,7 +113,8 @@ int minValue(Board* b, int cpuval){
 		else return (b->winner() * -1);
 	}
 	//otherwise, recursive call to maxValue for all successors
-	else{
+	else
+	{
 		Board* test[9];
 		int count = 0;
 		int t;
@@ -131,8 +132,11 @@ int minValue(Board* b, int cpuval){
 				}
 			}
 		}
-	for(int k=0; k<=count; k++) delete test[count];
-	return min;
+		for(int k=0; k<count; k++)
+		{
+			delete test[k];
+		}
+		return min;
 	}
 }
 
@@ -160,8 +164,11 @@ int maxValue(Board* b, int cpuval){
 				}
 			}
 		}
-	for(int k=0; k<=count; k++) delete test[count];
-	return max;
+		for(int k=0; k<count; k++)
+		{
+			delete test[k];
+		}
+		return max;
 	}
 }
 
@@ -218,7 +225,7 @@ int main(){
 	b->play_square(1, 2, -1);
 	b->play_square(1, 3, 1);
 	b->play_square(2, 1, -1);
-	cout << minValue(b, 1) << endl;
+	cout << maxValue(b, 1) << endl;
 return
 	 0;
 }
