@@ -119,12 +119,11 @@ int minValue(Board* b, int cpuval){
 		int count = 0;
 		int t;
 		int min = 1;
-		int oppoval = (cpuval * -1);
 		for(int i=1; i<4; i++){
 			for(int j=1; j<4; j++){
 				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
-					test[count]->play_square(i, j, oppoval);
+					test[count]->play_square(i, j, cpuval);
 					cout << test[count]->toString();
 					t = maxValue(test[count], cpuval);
 					if(t < min) min = t;
@@ -152,11 +151,12 @@ int maxValue(Board* b, int cpuval){
 		int count = 0;
 		int t;
 		int max = -1;
+		int oppoval = (cpuval * -1);
 		for(int i=1; i<4; i++){
 			for(int j=1; j<4; j++){
 				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
-					test[count]->play_square(i, j, cpuval);
+					test[count]->play_square(i, j, oppoval);
 					cout << test[count]->toString();
 					t = minValue(test[count], cpuval);
 					if(t > max) max = t;
