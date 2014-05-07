@@ -217,3 +217,7 @@ pip-log.txt
 #Program File
 TicTacToe.dSYM
 TicTacToe
+
+#Executable files 
+./debug
+./TicTacToe

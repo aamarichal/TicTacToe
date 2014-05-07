@@ -3,6 +3,8 @@
 
 #include<iostream>
 #include<sstream>
+#include<vector>
+#include<algorithm>
 
 #include<string>
 
@@ -86,8 +88,131 @@ bool Board::isEmpty(int row, int col){
 	else return false; 
 }
 
+/*******************************************************
+* This is the minimax tree and its methods
+********************************************************/
+
+class node {
+private: 
+	std::vector<node*> children; 
+	node* parent;
+	float utility;
+	bool minimax; // 1 if max node, 0 if min node
+	Board* state; 
+public: 
+	node(Board* state, bool minormax);
+	void addChild(Board* newState, bool minormax);
+	void printChildren();
+	std::vector<node*> getChildren() {return children;};
+	float getUtility() {return utility;};
+	Board* getState() {return state;};
+	void setUtility(float u) {utility = u;};
+};
+
+node::node(Board* state, bool minormax) {
+	minimax = minormax;
+	parent = NULL;
+	utility = 0;
+	state = NULL;
+}
+
+void node::addChild(Board* newState, bool minormax) {
+	/* 
+	 * Pushes a new child node into the children vector 
+	 * given the next availble state
+	*/
+	node* n = new node(newState, minormax);
+	children.push_back(n);
+}
+
+
+
+void node::printChildren() {
+	/* Test to see if child nodes are added to vector 
+	 * Mainly for debugging purposes
+	 */
+	cout << "Child nodes: \n";
+	for (int i=0; i<children.size();i++) {
+		if (children.at(i)->minimax == true) {
+			cout << "Maximum\n";
+		} else {
+			cout << "Minimum\n";
+		}
+	}
+}
+
+class tree {
+	// This class may not be necessary
+private: 
+	node* root; 
+	float alpha;
+	float beta; 
+public: 
+	tree();
+	float alphaBetaPruning(node* currentNode, int depth, float alpha, float beta, bool maximizingPlayer, Board* state);
+};
+
+tree::tree() {
+	root = new node(new Board(), 1); // New max node at top
+	alpha = -99999999;
+	beta = 99999999;
+}
+
+float tree::alphaBetaPruning(node* currentNode, int depth, float alpha, float beta, bool maximizingPlayer, Board* state) {
+	// First set all states for child nodes
+	Board* temp = currentNode->getState(); 
+	for (int i=0; i<depth; i++) {
+		// try all possible moves 
+		for (int j=0; j<3; j++) {
+			for (int k=0; k<3; k++) {
+				if (temp->isEmpty(j, k)) {
+					node* child = new node(temp, !maximizingPlayer);
+					child->getState()->play_square(j+1, k+1, 0);
+					currentNode->addChild(child->getState(), !maximizingPlayer);
+				}
+			}
+		}
+	}
+
+	if (depth == 0 || currentNode->getChildren().size() == 0) {
+		/* Set utility value and then return it
+		 * If node is a terminal node, return its utility 
+		 * value 
+		 */
+		int winner = state->winner();
+		if (winner == 1) {
+			currentNode->setUtility(-1);
+		} else if (winner == -1) {
+			currentNode->setUtility(1);
+		} else {
+			currentNode->setUtility(0);
+		}
+		return currentNode->getUtility(); 
+	}
+
+	/* Maximizing player will set a new alpha value if it is higher than the previous*/
+	if (maximizingPlayer) { // Now at max node
+		for (int i=0; i<currentNode->getChildren().size(); i++) {
+			alpha = std::max(alpha, alphaBetaPruning(currentNode->getChildren().at(i), depth-1, alpha, beta, false, state));
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		return alpha;
+	} else {	// At min node
+		/* Will set a new beta value if it is less than the current one */
+		for (int j=0; j<currentNode->getChildren().size(); j++) {
+			beta = std::min(beta, alphaBetaPruning(currentNode->getChildren().at(j), depth-1, alpha, beta, true, state));
+			if (beta <= alpha) {
+				break;
+			}
+		}
+		return beta;
+	}
+}
+
 /********************************************************
-* Declare all functions not in Board class here
+* Declare all functions not in Board, node, or tree class here
 ********************************************************/
 
 int minValue(Board*, int);
@@ -211,21 +336,10 @@ void play() {
 	cin >> a;
 }
 
-/*
+
 int main(int argc, char * argv[])
 {
 	play();
 	return 0;
 }
-*/
 
-int main(){
-	Board* b = new Board();
-	b->play_square(1, 1, 1);
-	b->play_square(1, 2, -1);
-	b->play_square(1, 3, 1);
-	b->play_square(2, 1, -1);
-	cout << maxValue(b, 1) << endl;
-return
-	 0;
-}
