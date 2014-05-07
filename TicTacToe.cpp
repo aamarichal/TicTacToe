@@ -225,6 +225,7 @@ int main(){
 	b->play_square(1, 2, -1);
 	b->play_square(1, 3, 1);
 	b->play_square(2, 1, -1);
+
 	cout << maxValue(b, 1) << endl;
 return
 	 0;
