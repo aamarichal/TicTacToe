@@ -102,8 +102,8 @@ bool Board::isEmpty(int row, int col){
 * Function Declarations
 ********************************************************/
 
-int minValue(Board*, int);
-int maxValue(Board*, int);
+int minValue(Board*, int, int, int);
+int maxValue(Board*, int, int, int);
 void play();
 bool make_simple_cpu_move(Board*, int);
 bool cpu_MiniMax_Move(Board*, int);
@@ -177,8 +177,8 @@ void play() {
 * Min / Max Functions
 ********************************************************/
 
-int minValue(Board* b, int cpuval){
-	//if terminal case, return utility (1 is win, -1 is lose, 0 is tie)
+int minValue(Board* b, int cpuval, int alpha, int beta){
+	//if termininumal case, return utility (1 is win, -1 is lose, 0 is tie)
 	if(b->full_board() || b->winner()!=0)
 	{
 		/* IF CPU is X, return result of winner function */
@@ -195,8 +195,8 @@ int minValue(Board* b, int cpuval){
 		int count = 0;
 		/* t is the value returned after trying a test move */
 		int t;
-		/* Min is the current minimum value returned */
-		int min = 1;
+		/* Min is the current mininumimum value returned */
+		int mininum = 1;
 		/* Set opponent to have the opposite value of the CPU
 		 * e.g. if CPU is X, opponent is O */
 		int oppoval = (cpuval * -1);
@@ -210,11 +210,17 @@ int minValue(Board* b, int cpuval){
 					test[count]->play_square(i, j, oppoval);
 					/* Print current board */
 					cout << test[count]->toString();
-					/* Find the maximum value from playing in the given square */
-					t = maxValue(test[count], cpuval);
-					/* If the current value t is less than the minimum value
-					 * t is the new minimum value */
-					if(t < min) min = t;
+					/* Find the maximumimum value from playing in the given square */
+					t = maxValue(test[count], cpuval, alpha, beta);
+					/* If the current value t is less than the mininumimum value
+					 * t is the new mininumimum value */
+					if(t < mininum)
+					{
+						mininum = t;
+						if (mininum <= alpha)
+							return mininum;
+					}
+					beta = min(beta, mininum);
 					count++;
 				}
 			}
@@ -224,13 +230,13 @@ int minValue(Board* b, int cpuval){
 		{
 			delete test[k];
 		}
-		/* Return the minimum value */
-		return min;
+		/* Return the mininumimum value */
+		return mininum;
 	}
 }
 
-int maxValue(Board* b, int cpuval){
-	//if terminal case, return utility (1 is win, -1 is lose, 0 is tie)
+int maxValue(Board* b, int cpuval, int alpha, int beta){
+	//if termininumal case, return utility (1 is win, -1 is lose, 0 is tie)
 	if(b->full_board() || b->winner()!=0)
 	{
 		/* IF CPU is X, return result of winner function */
@@ -247,8 +253,8 @@ int maxValue(Board* b, int cpuval){
 		int count = 0;
 		/* t is the value returned after trying a test move */
 		int t;
-		/* Max is the current maximum value returned */
-		int max = -1;
+		/* Max is the current maximumimum value returned */
+		int maximum = -1;
 		for(int i=1; i<4; i++){
 			for(int j=1; j<4; j++){
 				/* If a square is empty, try to play there */
@@ -259,11 +265,17 @@ int maxValue(Board* b, int cpuval){
 					test[count]->play_square(i, j, cpuval);
 					/* Print current board */
 					cout << test[count]->toString();
-					/* Find the minimum value from playing in the given square */
-					t = minValue(test[count], cpuval);
-					/* If the current value t is greater than the maximum value
-					 * t is the new maximum value */
-					if(t > max) max = t;
+					/* Find the mininumimum value from playing in the given square */
+					t = minValue(test[count], cpuval, alpha, beta);
+					/* If the current value t is greater than the maximumimum value
+					 * t is the new maximumimum value */
+					if(t > maximum) 
+					{
+						maximum = t;
+						if (maximum >= beta)
+							return maximum;
+					}
+					alpha = max(alpha, maximum);
 					count++;
 				}
 			}
@@ -273,8 +285,8 @@ int maxValue(Board* b, int cpuval){
 		{
 			delete test[k];
 		}
-		/* Return the maximum value */
-		return max;
+		/* Return the maximumimum value */
+		return maximum;
 	}
 }
 
@@ -286,8 +298,8 @@ bool cpu_MiniMax_Move(Board* b, int cpuval){
 	Board* test[9];
 	/* Create a counter for the number of boards attempted */
 	int count = 0;
-	/* Max is the current maximum value returned */
-	int max = -2;
+	/* Max is the current maximumimum value returned */
+	int maximum = -2;
 	/* t is the value returned after trying a test move */
 	int t;
 	/* Move stores the current best possible move */
@@ -302,12 +314,12 @@ bool cpu_MiniMax_Move(Board* b, int cpuval){
 				test[count] = new Board(*b);
 				/* Play in the free square */
 				test[count]->play_square(i, j, cpuval);
-				/* Find the minimum value from playing in the given square */
-				t = minValue(test[count], cpuval);
-				//if minValue for a move is greater than current max,
+				/* Find the mininumimum value from playing in the given square */
+				t = minValue(test[count], cpuval, 0, 0);
+				//if minValue for a move is greater than current maximum,
 				//CPU will make that move
-				if(t > max){
-					max = t;
+				if(t > maximum){
+					maximum = t;
 					move[0] = i;
 					move[1] = j;
 				}
