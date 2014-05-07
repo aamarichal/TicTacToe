@@ -368,13 +368,13 @@ int main(int argc, char * argv[])
 	char willPlay = 'Y';
 	while (true)
 	{
-		if (willPlay == 'Y')
+		if (willPlay == 'Y' || willPlay == 'y')
 		{
 			play();
 			cout << "Play again? (Y/N) ";
 			cin >> willPlay;
 		}
-		else if (willPlay == 'N')
+		else if (willPlay == 'N' || willPlay == 'n')
 		{
 			return 0;
 		}
