@@ -94,6 +94,7 @@ int minValue(Board*, int);
 int maxValue(Board*, int);
 void play();
 bool make_simple_cpu_move(Board*, int);
+bool cpu_MiniMax_Move(Board*, int);
 
 bool make_simple_cpu_move(Board * b, int cpuval) {
 	for(int i=1; i<4; i++)
@@ -125,7 +126,6 @@ int minValue(Board* b, int cpuval){
 				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
 					test[count]->play_square(i, j, oppoval);
-					cout << test[count]->toString();
 					t = maxValue(test[count], cpuval);
 					if(t < min) min = t;
 					count++;
@@ -157,7 +157,6 @@ int maxValue(Board* b, int cpuval){
 				if(b->isEmpty(i, j)){
 					test[count] = new Board(*b);
 					test[count]->play_square(i, j, cpuval);
-					cout << test[count]->toString();
 					t = minValue(test[count], cpuval);
 					if(t > max) max = t;
 					count++;
@@ -170,6 +169,40 @@ int maxValue(Board* b, int cpuval){
 		}
 		return max;
 	}
+}
+
+bool cpu_MiniMax_Move(Board* b, int cpuval){
+	Board* test[9];
+	int count = 0;
+	int max = -2;
+	int t;
+	int move[2];
+	
+	//get minValue for every possible move
+	for(int i=1; i<4; i++){
+		for(int j=1; j<4; j++){
+			if(b->isEmpty(i, j)){
+				test[count] = new Board(*b);
+				test[count]->play_square(i, j, cpuval);
+				t = minValue(test[count], cpuval);
+				//if minValue for a move is greater than current max,
+				//CPU will make that move
+				if(t > max){
+					max = t;
+					move[0] = i;
+					move[1] = j;
+				}
+				count++;
+			}
+		}
+	}
+	for(int k=0; k<count; k++) delete test[k];
+	//CPU making move
+	if(t > -2){
+		b->play_square(move[0], move[1], cpuval);
+		return true;
+	}
+	return false;
 }
 
 
@@ -196,7 +229,7 @@ void play() {
 				break;
 			else {
 				cout << b->toString() << "..." << endl;
-				make_simple_cpu_move(b, cpuPlayer);
+				cpu_MiniMax_Move(b, cpuPlayer);
 				cout << b->toString();
 			}
 		}
@@ -211,14 +244,16 @@ void play() {
 	cin >> a;
 }
 
-/*
+
 int main(int argc, char * argv[])
 {
 	play();
 	return 0;
 }
-*/
 
+
+/* test main function for minValue and maxValue function
+*
 int main(){
 	Board* b = new Board();
 	b->play_square(1, 1, 1);
@@ -230,3 +265,4 @@ int main(){
 return
 	 0;
 }
+*/
