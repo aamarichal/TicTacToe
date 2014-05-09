@@ -3,6 +3,7 @@
 
 #include<iostream>
 #include<sstream>
+#include<stdlib.h>
 
 #include<string>
 
@@ -104,7 +105,7 @@ bool Board::isEmpty(int row, int col){
 
 int minValue(Board*, int, int, int);
 int maxValue(Board*, int, int, int);
-void play();
+void play(int startingPlayer);
 bool make_simple_cpu_move(Board*, int);
 bool cpu_MiniMax_Move(Board*, int);
 
@@ -112,13 +113,16 @@ bool cpu_MiniMax_Move(Board*, int);
 * Play Function
 ********************************************************/
 
-void play() {
+void play(int startingPlayer) {
 	/* Create Blank Board  */
 	Board * b = new Board();
 
 	/* Human = O & CPU = X */
 	int humanPlayer = 1;
 	int cpuPlayer = -1;
+	// Initialize random values for first computer move
+	int row = rand() % 2 + 1;
+	int col = rand() % 2 + 1;
 
 	/* Print initial, empty board */
 	cout << b->toString();
@@ -126,45 +130,54 @@ void play() {
 	/* While there is no winner and the board isn't filled, loop */
 	while(!b->full_board()&&b->winner()==0) {
 		/* Get human's move */
-		int row, col;
-		cout << "Your move row (1-3): ";
-		cin >> row;
-		cout << endl;
-		cout << "Your move col (1-3): ";
-		cin >> col;
-		cout << endl;
+		if (startingPlayer == 1) {
+			cout << "Your move row (1-3): ";
+			cin >> row;
+			cout << endl;
+			cout << "Your move col (1-3): ";
+			cin >> col;
+			cout << endl;
+		 
 
-		/* If the input is invalid, start from the top of the loop */
-		if (row > 3 || row < 1 || col > 3 || col < 1)
-		{
-			cout << "Input out of range." << endl;
-			continue;
-		}
-		/* If the human's desired square is already filled,
-		 * start from the top of the loop */
-		if(b->get_square(row, col)!=0) {
-			cout << "Square already taken." << endl;
-			continue;
-		}
-		else
-		{
-			/* Fill square with human's value */
-			b->play_square(row, col, humanPlayer);
-			/* Print the new board after the human's move */
-			cout << b->toString();
-			/* If the board is full or the human has won, exit loop */
-			if(b->full_board() || b->winner()!=0)
-				break;
-			/* The CPU makes a move */
+			/* If the input is invalid, start from the top of the loop */
+			if (row > 3 || row < 1 || col > 3 || col < 1)
+			{
+				cout << "Input out of range." << endl;
+				continue;
+			}
+			/* If the human's desired square is already filled,
+			 * start from the top of the loop */
+			if(b->get_square(row, col)!=0) {
+				cout << "Square already taken." << endl;
+				continue;
+			}
 			else
 			{
-				cout << "..." << endl;
-				cpu_MiniMax_Move(b, cpuPlayer);
-				/* Print the new board after the CPU's move */
+				/* Fill square with human's value */
+				b->play_square(row, col, humanPlayer);
+				/* Print the new board after the human's move */
 				cout << b->toString();
+				/* If the board is full or the human has won, exit loop */
+				if(b->full_board() || b->winner()!=0)
+					break;
+				/* The CPU makes a move */
+				else
+				{
+					cout << "..." << endl;
+					cpu_MiniMax_Move(b, cpuPlayer);
+					/* Print the new board after the CPU's move */
+					cout << b->toString();
+				}
 			}
-		}
-	}
+	} 
+	else {
+		b->play_square(row, col, cpuPlayer);
+		/* Print the new board after the CPU's move */
+		cout << b->toString();
+		// Continue play as if human had started first 
+		startingPlayer = 1;
+	} 
+}
 	if(b->winner()==0)
 		cout << "Cat game." << endl;
 	else if(b->winner()==cpuPlayer)
@@ -366,11 +379,19 @@ return
 int main(int argc, char * argv[])
 {
 	char willPlay = 'Y';
+	int order;
 	while (true)
 	{
 		if (willPlay == 'Y' || willPlay == 'y')
 		{
-			play();
+			cout << "Press 1 to play first and 2 to play second: ";
+			cin >> order;
+			while (order != 1 && order != 2) {
+				cout << "Invalid input" << endl;
+				cout << "Please enter 1 or 2: "; 
+				cin >> order;
+			}
+			play(order);
 			cout << "Play again? (Y/N) ";
 			cin >> willPlay;
 		}
