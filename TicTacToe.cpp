@@ -171,6 +171,9 @@ void play(int startingPlayer) {
 			}
 	} 
 	else {
+		// Swap X's and O's
+		humanPlayer = -1;
+		cpuPlayer = 1;
 		b->play_square(row, col, cpuPlayer);
 		/* Print the new board after the CPU's move */
 		cout << b->toString();
